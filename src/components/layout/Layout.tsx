@@ -71,7 +71,7 @@ export const Layout = () => {
             <div className="flex flex-col items-center justify-center p-3 mb-4 text-center relative">
               <span className="text-xs text-textMuted uppercase tracking-wider font-bold mb-2">Trader Behavior</span>
               <img 
-                src={marketBias === 'BULL' ? '/bull.png' : '/bear.png'} 
+                src={marketBias === 'BULL' ? `${import.meta.env.BASE_URL}bull.png` : `${import.meta.env.BASE_URL}bear.png`} 
                 alt={marketBias}
                 className="w-36 h-36 object-contain mb-2 drop-shadow-lg mix-blend-screen"
               />
@@ -106,7 +106,7 @@ export const Layout = () => {
         {marketBias && (
           <div className="flex items-center">
             <img 
-              src={marketBias === 'BULL' ? '/bull.png' : '/bear.png'} 
+              src={marketBias === 'BULL' ? `${import.meta.env.BASE_URL}bull.png` : `${import.meta.env.BASE_URL}bear.png`} 
               alt={marketBias}
               className="w-8 h-8 object-contain mr-2 mix-blend-screen"
             />

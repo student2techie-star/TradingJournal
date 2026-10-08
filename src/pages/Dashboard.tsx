@@ -79,8 +79,8 @@ export const Dashboard = () => {
     return acc;
   }, []);
 
-  const bullImageUrl = '/bull.png';
-  const bearImageUrl = '/bear.png';
+  const bullImageUrl = `${import.meta.env.BASE_URL}bull.png`;
+  const bearImageUrl = `${import.meta.env.BASE_URL}bear.png`;
   const backgroundUrl = marketBias === 'BULL' ? bullImageUrl : bearImageUrl;
 
   return (
