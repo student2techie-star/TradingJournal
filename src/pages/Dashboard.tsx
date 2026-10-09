@@ -123,7 +123,7 @@ export const Dashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
             <h1 className="text-2xl font-bold text-textMain">
-              {greeting}, {marketBias === 'BULL' ? 'Mr. Bull' : 'Mr. Bear'}
+              {greeting}, {user?.user_metadata?.name || user?.email?.split('@')[0] || 'Trader'} {marketBias === 'BULL' ? 'Bull' : 'Bear'}
             </h1>
             <p className="text-textMuted mt-1">Here's your trading discipline summary for today.</p>
           </div>
