@@ -13,6 +13,7 @@ export const NewTrade = () => {
   // Form states
   const [symbol, setSymbol] = useState('');
   const [direction, setDirection] = useState('BUY');
+  const [outcome, setOutcome] = useState<'WIN'|'LOSS'>('WIN');
   const [profitLoss, setProfitLoss] = useState('');
   const [tradeDate, setTradeDate] = useState(new Date().toISOString().split('T')[0]);
   
@@ -36,7 +37,7 @@ export const NewTrade = () => {
       trade_date: tradeDate,
       symbol,
       direction,
-      profit_loss: parseFloat(profitLoss),
+      profit_loss: outcome === 'LOSS' ? -Math.abs(parseFloat(profitLoss)) : Math.abs(parseFloat(profitLoss)),
       followed_plan: followedPlan,
       planned_setup: plannedSetup,
       fomo,
@@ -100,8 +101,28 @@ export const NewTrade = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-textMain mb-2">Realized P&L ($)</label>
-              <input required type="number" value={profitLoss} onChange={(e) => setProfitLoss(e.target.value)} step="0.01" className="block w-full rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-primary focus:outline-none" />
+              <label className="block text-sm font-medium text-textMain mb-2">Outcome</label>
+              <div className="flex gap-2">
+                <button 
+                  type="button" 
+                  onClick={() => setOutcome('WIN')}
+                  className={`flex-1 py-2 rounded-md font-medium text-sm transition-colors ${outcome === 'WIN' ? 'bg-success/20 text-success border-success/50' : 'bg-surfaceHighlight text-textMuted border-transparent'} border`}
+                >
+                  Win
+                </button>
+                <button 
+                  type="button" 
+                  onClick={() => setOutcome('LOSS')}
+                  className={`flex-1 py-2 rounded-md font-medium text-sm transition-colors ${outcome === 'LOSS' ? 'bg-danger/20 text-danger border-danger/50' : 'bg-surfaceHighlight text-textMuted border-transparent'} border`}
+                >
+                  Loss
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-textMain mb-2">Amount ($)</label>
+              <input required type="number" min="0" value={profitLoss} onChange={(e) => setProfitLoss(e.target.value)} step="0.01" placeholder="e.g. 50.00" className="block w-full rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-primary focus:outline-none" />
             </div>
 
           </div>
