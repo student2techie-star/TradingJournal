@@ -44,7 +44,7 @@ export const Register = () => {
   return (
     <div 
       className="flex min-h-screen items-center justify-end px-4 sm:px-12 lg:px-32 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('/login_page.png')` }}
+      style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('${import.meta.env.BASE_URL}login_page.png')` }}
     >
       <div className="w-full max-w-md space-y-8 rounded-xl bg-surface/60 backdrop-blur-md p-8 shadow-2xl border border-surfaceHighlight">
         <div>

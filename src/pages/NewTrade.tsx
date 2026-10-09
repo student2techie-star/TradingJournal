@@ -37,7 +37,6 @@ export const NewTrade = () => {
       symbol,
       direction,
       profit_loss: parseFloat(profitLoss),
-      result: parseFloat(profitLoss) > 0 ? 'WIN' : (parseFloat(profitLoss) < 0 ? 'LOSS' : 'BREAKEVEN'),
       followed_plan: followedPlan,
       planned_setup: plannedSetup,
       fomo,

@@ -88,8 +88,6 @@ export const Trades = () => {
               <th className="px-6 py-4 font-medium">Direction</th>
               <th className="px-6 py-4 font-medium">Setup</th>
               <th className="px-6 py-4 font-medium">P&L</th>
-              <th className="px-6 py-4 font-medium">R-Multiple</th>
-              <th className="px-6 py-4 font-medium">Result</th>
               <th className="px-6 py-4 font-medium">Flags</th>
             </tr>
           </thead>
@@ -110,16 +108,6 @@ export const Trades = () => {
                 <td className="px-6 py-4 text-textMuted">{trade.setup_types?.join(', ')}</td>
                 <td className={`px-6 py-4 font-bold ${trade.profit_loss && trade.profit_loss > 0 ? 'text-success' : 'text-danger'}`}>
                   {trade.profit_loss && trade.profit_loss > 0 ? '+' : ''}${trade.profit_loss?.toFixed(2)}
-                </td>
-                <td className="px-6 py-4 text-textMuted">{trade.r_multiple && trade.r_multiple > 0 ? '+' : ''}{trade.r_multiple}R</td>
-                <td className="px-6 py-4">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    trade.result === 'WIN' ? 'bg-success/10 text-success border border-success/20' : 
-                    trade.result === 'LOSS' ? 'bg-danger/10 text-danger border border-danger/20' : 
-                    'bg-surfaceHighlight text-textMuted'
-                  }`}>
-                    {trade.result}
-                  </span>
                 </td>
                 <td className="px-6 py-4">
                   {trade.planned_setup ? (

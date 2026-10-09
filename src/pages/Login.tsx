@@ -50,7 +50,7 @@ export const Login = () => {
   return (
     <div 
       className="flex min-h-screen items-center justify-end px-4 sm:px-12 lg:px-32 bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('/login_page.png')` }}
+      style={{ backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('${import.meta.env.BASE_URL}login_page.png')` }}
     >
       {/* Quote Overlay - Hidden on small screens */}
       <div className="absolute bottom-12 left-12 lg:left-24 max-w-lg hidden md:block">

@@ -28,16 +28,10 @@ export interface Trade {
   direction: TradeDirection;
   session: string | null;
   setup_types: string[] | null;
-  entry_price: number | null;
-  stop_loss: number | null;
-  take_profit: number | null;
-  exit_price: number | null;
   lot_size: number | null;
   risk_amount: number | null;
   risk_percent: number | null;
   profit_loss: number | null;
-  r_multiple: number | null;
-  result: TradeResult | null;
   
   before_emotion: string | null;
   after_emotion: string | null;
@@ -50,13 +44,6 @@ export interface Trade {
   revenge_trade: boolean | null;
   overtrade: boolean | null;
   
-  trade_reason: string | null;
-  market_analysis: string | null;
-  entry_reason: string | null;
-  exit_reason: string | null;
-  
-  what_went_well: string | null;
-  what_went_wrong: string | null;
   lesson_learned: string | null;
   
   override_used: boolean;
