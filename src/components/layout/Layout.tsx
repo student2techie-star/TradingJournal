@@ -103,18 +103,24 @@ export const Layout = () => {
           <Activity className="h-6 w-6 text-primary" />
           <span className="ml-2 text-lg font-bold tracking-wider text-textMain">DISCIPLINE</span>
         </div>
-        {marketBias && (
-          <div className="flex items-center">
-            <img 
-              src={marketBias === 'BULL' ? `${import.meta.env.BASE_URL}bull.png` : `${import.meta.env.BASE_URL}bear.png`} 
-              alt={marketBias}
-              className="w-8 h-8 object-contain mr-2 mix-blend-screen"
-            />
-            <span className={`text-xs font-bold ${marketBias === 'BULL' ? 'text-success' : 'text-danger'}`}>
-              {marketBias}
-            </span>
-          </div>
-        )}
+        <div className="flex items-center gap-3">
+          {marketBias && (
+            <div className="flex items-center">
+              <img 
+                src={marketBias === 'BULL' ? `${import.meta.env.BASE_URL}bull.png` : `${import.meta.env.BASE_URL}bear.png`} 
+                alt={marketBias}
+                className="w-8 h-8 object-contain mr-1 mix-blend-screen"
+              />
+            </div>
+          )}
+          <button 
+            onClick={() => signOut()} 
+            className="p-2 text-textMuted hover:text-textMain hover:bg-surfaceHighlight rounded-lg transition-colors"
+            title="Sign Out"
+          >
+            <LogOut className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Mobile bottom nav (simplified) */}

@@ -42,11 +42,15 @@ export const Register = () => {
   };
 
   return (
-    <div 
-      className="flex min-h-screen items-center justify-end px-4 sm:px-12 lg:px-32 bg-cover bg-center bg-no-repeat"
-      style={{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.8)), url('${import.meta.env.BASE_URL}login_page.png')` }}
-    >
-      <div className="w-full max-w-md space-y-8 rounded-xl bg-surface/60 backdrop-blur-md p-8 shadow-2xl border border-surfaceHighlight">
+    <div className="flex min-h-screen items-center justify-center sm:justify-end px-4 sm:px-12 lg:px-32 relative overflow-hidden">
+      {/* Background Image & Responsive Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}login_page.png')` }}
+      />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/60 sm:from-black/20 to-black/90 sm:to-black/80" />
+      
+      <div className="w-full max-w-md space-y-8 rounded-xl bg-surface/60 backdrop-blur-md p-8 shadow-2xl border border-surfaceHighlight relative z-10">
         <div>
           <h2 className="text-center text-3xl font-bold tracking-tight text-textMain">
             Create an Account

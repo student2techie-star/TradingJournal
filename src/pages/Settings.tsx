@@ -2,21 +2,65 @@ import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 import { supabase } from '../services/supabase';
 import toast from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 
 export const Settings = () => {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [pwdLoading, setPwdLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Rules state
+  const [maxLoss, setMaxLoss] = useState<number>(20);
+  const [maxProfit, setMaxProfit] = useState<number>(30);
+  const [maxTrades, setMaxTrades] = useState<number>(5);
+  const [defaultRisk, setDefaultRisk] = useState<number>(5);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const fetchRules = async () => {
+      const { data, error } = await supabase
+        .from('trading_rules')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (data) {
+        setMaxLoss(data.max_daily_loss || 20);
+        setMaxProfit(data.max_daily_profit || 30);
+        setMaxTrades(data.max_trades_per_day || 5);
+        setDefaultRisk(data.default_risk_per_trade || 5);
+      }
+    };
+    fetchRules();
+  }, [user]);
   
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) return toast.error('Please log in');
+
     setLoading(true);
-    // Simulate save
-    setTimeout(() => {
-      setLoading(false);
+    
+    // Check if rules exist first to handle insert vs update, or use upsert
+    const { error } = await supabase
+      .from('trading_rules')
+      .upsert({
+        user_id: user.id,
+        max_daily_loss: maxLoss,
+        max_daily_profit: maxProfit,
+        max_trades_per_day: maxTrades,
+        default_risk_per_trade: defaultRisk,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+
+    if (error) {
+      toast.error('Failed to save rules: ' + error.message);
+    } else {
       toast.success('Rules updated successfully');
-    }, 1000);
+    }
+    
+    setLoading(false);
   };
 
   const handlePasswordChange = async (e: React.FormEvent) => {
@@ -69,7 +113,8 @@ export const Settings = () => {
                 <input
                   type="number"
                   id="maxLoss"
-                  defaultValue={20}
+                  value={maxLoss}
+                  onChange={(e) => setMaxLoss(parseFloat(e.target.value))}
                   className="block w-full pl-7 rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-danger focus:outline-none focus:ring-1 focus:ring-danger sm:text-sm"
                 />
               </div>
@@ -88,7 +133,8 @@ export const Settings = () => {
                 <input
                   type="number"
                   id="maxProfit"
-                  defaultValue={30}
+                  value={maxProfit}
+                  onChange={(e) => setMaxProfit(parseFloat(e.target.value))}
                   className="block w-full pl-7 rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-success focus:outline-none focus:ring-1 focus:ring-success sm:text-sm"
                 />
               </div>
@@ -103,7 +149,8 @@ export const Settings = () => {
               <input
                 type="number"
                 id="maxTrades"
-                defaultValue={5}
+                value={maxTrades}
+                onChange={(e) => setMaxTrades(parseInt(e.target.value))}
                 className="block w-full rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
               />
                <p className="mt-1 text-xs text-textMuted">Limits overtrading and revenge trading.</p>
@@ -121,7 +168,8 @@ export const Settings = () => {
                 <input
                   type="number"
                   id="defaultRisk"
-                  defaultValue={5}
+                  value={defaultRisk}
+                  onChange={(e) => setDefaultRisk(parseFloat(e.target.value))}
                   className="block w-full pl-7 rounded-md border border-surfaceHighlight bg-background px-3 py-2 text-textMain focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
                 />
               </div>

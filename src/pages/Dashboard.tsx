@@ -23,23 +23,49 @@ export const Dashboard = () => {
   const { user } = useAuth();
   const [trades, setTrades] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rules, setRules] = useState({
+    maxLoss: 20,
+    maxProfit: 30,
+    maxTrades: 5
+  });
 
   React.useEffect(() => {
     if (!user) return;
 
-    const fetchTrades = async () => {
-      const { data } = await supabase
-        .from('trades')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('trade_date', { ascending: true });
+    const fetchTradesAndRules = async () => {
+      const [tradesRes, rulesRes] = await Promise.all([
+        supabase
+          .from('trades')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('trade_date', { ascending: true }),
+        supabase
+          .from('trading_rules')
+          .select('*')
+          .eq('user_id', user.id)
+          .single()
+      ]);
 
-      setTrades(data || []);
+      setTrades(tradesRes.data || []);
+      
+      if (rulesRes.data) {
+        setRules({
+          maxLoss: rulesRes.data.max_daily_loss || 20,
+          maxProfit: rulesRes.data.max_daily_profit || 30,
+          maxTrades: rulesRes.data.max_trades_per_day || 5
+        });
+      }
+      
       setLoading(false);
     };
 
-    fetchTrades();
+    fetchTradesAndRules();
   }, [user]);
+
+  // Dynamic Date and Greeting
+  const currentHour = new Date().getHours();
+  const greeting = currentHour < 12 ? 'Good Morning' : currentHour < 18 ? 'Good Afternoon' : 'Good Evening';
+  const currentDateFormatted = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 
   // Calculate real metrics
   const todaysTrades = trades.filter(t => t.trade_date === new Date().toISOString().split('T')[0]);
@@ -96,14 +122,14 @@ export const Dashboard = () => {
         {/* Header section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-textMain">Good Evening, Trader</h1>
+            <h1 className="text-2xl font-bold text-textMain">{greeting}, Trader</h1>
             <p className="text-textMuted mt-1">Here's your trading discipline summary for today.</p>
           </div>
 
           <div className="mt-4 md:mt-0 flex gap-4">
             <div className="px-4 py-2 bg-surfaceHighlight/40 backdrop-blur-md rounded-lg border border-surfaceHighlight/50">
               <span className="text-sm text-textMuted">Date:</span>
-              <span className="ml-2 font-medium">Oct 8, 2026</span>
+              <span className="ml-2 font-medium">{currentDateFormatted}</span>
             </div>
           </div>
         </div>
@@ -161,12 +187,12 @@ export const Dashboard = () => {
                 <Activity className="h-5 w-5 text-textMuted" />
                 <h3 className="font-medium text-textMain">Trades Today</h3>
               </div>
-              <span className="text-lg font-bold">{todaysTrades.length} / 5</span>
+              <span className="text-lg font-bold">{todaysTrades.length} / {rules.maxTrades}</span>
             </div>
             <div className="w-full bg-background rounded-full h-2.5">
-              <div className="bg-primary h-2.5 rounded-full" style={{ width: `${Math.min((todaysTrades.length / 5) * 100, 100)}%` }}></div>
+              <div className="bg-primary h-2.5 rounded-full" style={{ width: `${Math.min((todaysTrades.length / rules.maxTrades) * 100, 100)}%` }}></div>
             </div>
-            <p className="text-xs text-textMuted mt-3">You have {Math.max(5 - todaysTrades.length, 0)} trades remaining.</p>
+            <p className="text-xs text-textMuted mt-3">You have {Math.max(rules.maxTrades - todaysTrades.length, 0)} trades remaining.</p>
           </div>
 
           {/* Loss Limit */}
@@ -176,12 +202,12 @@ export const Dashboard = () => {
                 <ShieldAlert className="h-5 w-5 text-textMuted" />
                 <h3 className="font-medium text-textMain">Loss Limit</h3>
               </div>
-              <span className="text-lg font-bold text-danger">${Math.abs(Math.min(todaysPnl, 0)).toFixed(2)} / $50</span>
+              <span className="text-lg font-bold text-danger">${Math.abs(Math.min(todaysPnl, 0)).toFixed(2)} / ${rules.maxLoss}</span>
             </div>
             <div className="w-full bg-background rounded-full h-2.5">
-              <div className="bg-danger h-2.5 rounded-full" style={{ width: `${Math.min((Math.abs(Math.min(todaysPnl, 0)) / 50) * 100, 100)}%` }}></div>
+              <div className="bg-danger h-2.5 rounded-full" style={{ width: `${Math.min((Math.abs(Math.min(todaysPnl, 0)) / rules.maxLoss) * 100, 100)}%` }}></div>
             </div>
-            <p className="text-xs text-textMuted mt-3">Risk remaining: ${(50 - Math.abs(Math.min(todaysPnl, 0))).toFixed(2)}</p>
+            <p className="text-xs text-textMuted mt-3">Risk remaining: ${(rules.maxLoss - Math.abs(Math.min(todaysPnl, 0))).toFixed(2)}</p>
           </div>
 
           {/* Profit Target */}
@@ -191,12 +217,12 @@ export const Dashboard = () => {
                 <Target className="h-5 w-5 text-textMuted" />
                 <h3 className="font-medium text-textMain">Profit Target</h3>
               </div>
-              <span className="text-lg font-bold text-success">${Math.max(todaysPnl, 0).toFixed(2)} / $100</span>
+              <span className="text-lg font-bold text-success">${Math.max(todaysPnl, 0).toFixed(2)} / ${rules.maxProfit}</span>
             </div>
             <div className="w-full bg-background rounded-full h-2.5">
-              <div className="bg-success h-2.5 rounded-full" style={{ width: `${Math.min((Math.max(todaysPnl, 0) / 100) * 100, 100)}%` }}></div>
+              <div className="bg-success h-2.5 rounded-full" style={{ width: `${Math.min((Math.max(todaysPnl, 0) / rules.maxProfit) * 100, 100)}%` }}></div>
             </div>
-            <p className="text-xs text-textMuted mt-3">+${Math.max(100 - todaysPnl, 0).toFixed(2)} to reach target.</p>
+            <p className="text-xs text-textMuted mt-3">+${Math.max(rules.maxProfit - todaysPnl, 0).toFixed(2)} to reach target.</p>
           </div>
 
         </div>

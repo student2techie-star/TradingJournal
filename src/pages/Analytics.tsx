@@ -57,6 +57,13 @@ export const Analytics = () => {
     return acc;
   }, []);
 
+  const grossProfit = trades.filter(t => t.profit_loss > 0).reduce((acc, t) => acc + t.profit_loss, 0);
+  const grossLoss = Math.abs(trades.filter(t => t.profit_loss <= 0).reduce((acc, t) => acc + t.profit_loss, 0));
+  const profitFactor = grossLoss > 0 ? (grossProfit / grossLoss).toFixed(2) : grossProfit > 0 ? '∞' : '0.00';
+
+  // Last 25 trades sequence
+  const recentTradesSequence = trades.slice(-25).map(t => t.profit_loss > 0 ? 'W' : 'L');
+
   if (loading) {
     return <div className="p-6 text-center text-textMuted">Loading analytics...</div>;
   }
@@ -70,7 +77,7 @@ export const Analytics = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
         <div className="bg-surface/40 backdrop-blur-md border border-surfaceHighlight p-4 rounded-xl">
           <p className="text-xs text-textMuted uppercase mb-1">Win Rate</p>
           <p className="text-2xl font-bold text-textMain">{winRate}%</p>
@@ -82,6 +89,12 @@ export const Analytics = () => {
           </p>
         </div>
         <div className="bg-surface/40 backdrop-blur-md border border-surfaceHighlight p-4 rounded-xl">
+          <p className="text-xs text-textMuted uppercase mb-1">Profit Factor</p>
+          <p className={`text-2xl font-bold ${parseFloat(profitFactor) >= 1 ? 'text-success' : 'text-danger'}`}>
+            {profitFactor}
+          </p>
+        </div>
+        <div className="bg-surface/40 backdrop-blur-md border border-surfaceHighlight p-4 rounded-xl">
           <p className="text-xs text-textMuted uppercase mb-1">Total Trades</p>
           <p className="text-2xl font-bold text-textMain">{totalTrades}</p>
         </div>
@@ -90,6 +103,25 @@ export const Analytics = () => {
           <p className={`text-2xl font-bold ${avgScore >= 80 ? 'text-success' : 'text-danger'}`}>{avgScore}</p>
         </div>
       </div>
+
+      {/* Recent Sequence */}
+      {recentTradesSequence.length > 0 && (
+        <div className="bg-surface/40 backdrop-blur-md border border-surfaceHighlight rounded-xl p-6 overflow-hidden">
+          <h3 className="font-medium text-textMain mb-4">Recent Form (Last {recentTradesSequence.length} Trades)</h3>
+          <div className="flex flex-wrap gap-2">
+            {recentTradesSequence.map((result, idx) => (
+              <span 
+                key={idx} 
+                className={`w-8 h-8 flex items-center justify-center rounded font-bold text-sm ${
+                  result === 'W' ? 'bg-success/20 text-success' : 'bg-danger/20 text-danger'
+                }`}
+              >
+                {result}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Daily P&L Chart */}
       <div className="bg-surface/40 backdrop-blur-md border border-surfaceHighlight rounded-xl p-6">

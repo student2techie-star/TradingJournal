@@ -48,12 +48,16 @@ export const Login = () => {
   };
 
   return (
-    <div 
-      className="flex min-h-screen items-center justify-end px-4 sm:px-12 lg:px-32 bg-cover bg-center bg-no-repeat relative"
-      style={{ backgroundImage: `linear-gradient(to right, rgba(0,0,0,0.2), rgba(0,0,0,0.8)), url('${import.meta.env.BASE_URL}login_page.png')` }}
-    >
+    <div className="flex min-h-screen items-center justify-center sm:justify-end px-4 sm:px-12 lg:px-32 relative overflow-hidden">
+      {/* Background Image & Responsive Overlay */}
+      <div 
+        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: `url('${import.meta.env.BASE_URL}login_page.png')` }}
+      />
+      <div className="absolute inset-0 z-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/60 sm:from-black/20 to-black/90 sm:to-black/80" />
+      
       {/* Quote Overlay - Hidden on small screens */}
-      <div className="absolute bottom-12 left-12 lg:left-24 max-w-lg hidden md:block">
+      <div className="absolute bottom-12 left-12 lg:left-24 max-w-lg hidden md:block z-10">
         <h1 className="text-4xl lg:text-5xl font-bold text-white mb-4 drop-shadow-lg">
           Master Your Discipline.
         </h1>
