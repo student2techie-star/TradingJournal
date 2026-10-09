@@ -122,7 +122,9 @@ export const Dashboard = () => {
         {/* Header section */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
           <div>
-            <h1 className="text-2xl font-bold text-textMain">{greeting}, Trader</h1>
+            <h1 className="text-2xl font-bold text-textMain">
+              {greeting}, {marketBias === 'BULL' ? 'Mr. Bull' : 'Mr. Bear'}
+            </h1>
             <p className="text-textMuted mt-1">Here's your trading discipline summary for today.</p>
           </div>
 
